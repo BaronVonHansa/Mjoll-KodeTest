@@ -1,72 +1,104 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Switch, Grid, Typography } from '@material-ui/core';
+import React, { useState } from "react";
+import "./Styles.css"; // Import the CSS file
 
-const useStyles = makeStyles((theme) => ({
-  filterRow: {
-    padding: theme.spacing(2),
-    transition: 'background-color 0.3s',
-    cursor: 'pointer',
-  },
-  gray: {
-    backgroundColor: theme.palette.grey[200],
-  },
-  navyBlue: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  hover: {
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}));
-
-interface Filter {
-  label: string;
-  enabled: boolean;
+interface Option {
+	label: string;
+	description: string;
+	enabled: boolean;
 }
 
-const FilterApp: React.FC = () => {
-  const classes = useStyles();
-  const [filters, setFilters] = useState<Filter[]>([
-    { label: 'Filter 1', enabled: false },
-    { label: 'Filter 2', enabled: false },
-    { label: 'Filter 3', enabled: false },
-    { label: 'Filter 4', enabled: false },
-  ]);
+const App: React.FC = () => {
+	const [options, setOptions] = useState<Option[]>([
+		{
+			label: "Remove background for uploaded person images",
+			description: "Automatically remove the background for images that are uploaded to a specific person. This could increase the quality of the detected hits.",
+			enabled: false,
+		},
+		{
+			label: "Enable person functionality",
+			description: "Enables face detection, person search & other related functionality.",
+			enabled: false,
+		},
+		{
+			label: "Enable audio functionality",
+			description: "Enable audio upload & other related functionality.",
+			enabled: false,
+		},
+		{
+			label: "Enable file functionality",
+			description: "Enable file upload & other related functionality.",
+			enabled: false,
+		},
+		{
+			label: "Enable label functionality",
+			description: "Enable label detection & other related functionality.",
+			enabled: false,
+		},
+		{
+			label: "Enable tag functionality",
+			description: "Enable automatic tagging of IPTC tags when ingesting video & images",
+			enabled: false,
+		},
+	]);
 
-  const toggleFilter = (index: number) => {
-    setFilters((prevFilters) => {
-      const updatedFilters = [...prevFilters];
-      updatedFilters[index].enabled = !updatedFilters[index].enabled;
-      return updatedFilters;
-    });
-  };
+	const toggleOption = (index: number) => {
+		setOptions((prevOptions) => {
+			const updatedOptions = [...prevOptions];
+			updatedOptions[index] = {
+				...updatedOptions[index],
+				enabled: !updatedOptions[index].enabled,
+			};
+			return updatedOptions;
+		});
+	};
 
-  return (
-    <Grid container direction="column" alignItems="center">
-      {filters.map((filter, index) => (
-        <Grid
-          key={index}
-          item
-          container
-          alignItems="center"
-          justify="space-between"
-          className={`${classes.filterRow} ${
-            index % 2 === 0 ? classes.gray : classes.navyBlue
-          } ${classes.hover}`}
-        >
-          <Typography>{filter.label}</Typography>
-          <Switch
-            checked={filter.enabled}
-            onChange={() => toggleFilter(index)}
-            color="primary"
-          />
-        </Grid>
-      ))}
-    </Grid>
-  );
+	return (
+		<div style={{ backgroundColor: "rgba(18,23,34,255)", padding: 20 }}>
+			{options.map((option, index) => (
+				<div
+					key={index}
+					style={{
+						display: "flex",
+						alignItems: "center",
+						marginBottom: 10,
+						backgroundColor: option.enabled
+							? "rgba(0, 0, 0, 0.5)"
+							: "rgba(64, 64, 64, 0.5)",
+						padding: 10,
+						borderRadius: 5,
+						color: "white",
+						cursor: "pointer",
+					}}
+					onClick={() => toggleOption(index)}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.backgroundColor =
+							"rgba(0, 0, 0, 0.7)";
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.backgroundColor = option.enabled
+							? "rgba(0, 0, 0, 0.5)"
+							: "rgba(64, 64, 64, 0.5)";
+					}}
+				>
+					<span style={{ flex: 1 }}>
+						{option.label}
+						<br />
+						<span style={{ marginLeft: 20, fontSize: 12 }}>
+							{option.description}
+						</span>
+					</span>
+					<label className="switch">
+						<input
+							type="checkbox"
+							checked={option.enabled}
+							onChange={() => toggleOption(index)}
+						/>
+						<span className="slider round" />
+					</label>
+				</div>
+			))}
+		</div>
+	);
 };
 
-export default FilterApp;
+export default App;
